@@ -32,9 +32,10 @@ export default function Servicios() {
       id="servicios"
       className="bg-gradient-to-b from-gray-950 via-gray-900 to-gray-900 py-24 w-full scroll-mt-36"
     >
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
         transition={{ duration: 0.8 }}
         className="mx-auto px-4 md:px-6 max-w-7xl container"
       >

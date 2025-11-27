@@ -33,9 +33,10 @@ export default function PorQueNosotros() {
       id="por-que-nosotros"
       className="bg-gradient-to-b from-gray-900 to-gray-800 py-24 w-full scroll-mt-20"
     >
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
         transition={{ duration: 0.8 }}
         className="mx-auto px-4 md:px-6 max-w-7xl container"
       >

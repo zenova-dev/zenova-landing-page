@@ -1,9 +1,14 @@
+import dynamic from 'next/dynamic';
 import Hero from "./sections/Hero";
-import Servicios from "./sections/Servicios";
-import PorQueNosotros from "./sections/PorQueNosotros";
-import Contacto from "./sections/Contacto";
-import Hermes from "./sections/Hermes";
 import { NavBar } from "./nav-bar";
+
+// Lazy load secciones below-the-fold para mejor performance
+const Servicios = dynamic(() => import('./sections/Servicios'), {
+  loading: () => <div className="h-screen animate-pulse bg-gray-900" />
+});
+const PorQueNosotros = dynamic(() => import('./sections/PorQueNosotros'));
+const Hermes = dynamic(() => import('./sections/Hermes'));
+const Contacto = dynamic(() => import('./sections/Contacto'));
 
 const sections = [
   { id: "servicios", title: "Servicios" },
@@ -15,10 +20,17 @@ const sections = [
 export function ZenovaLanding() {
   return (
     <div className="flex flex-col min-h-screen text-gray-100 bg-gradient-to-b from-purple-900 via-gray-900 to-gray-950">
+      {/* Skip to main content link para accesibilidad */}
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:top-4 focus:left-4 focus:bg-purple-600 focus:text-white focus:px-4 focus:py-2 focus:rounded-lg focus:shadow-lg"
+      >
+        Saltar al contenido principal
+      </a>
       <div className="absolute inset-0 bg-[url('/grid.svg')] bg-repeat opacity-10"></div>
       <div className="relative z-10 flex flex-col min-h-screen">
         <NavBar />
-        <main className="flex-1" id="home">
+        <main className="flex-1" id="main-content">
           <Hero />
           <div className="bg-gradient-to-b from-gray-950 to-gray-900">
             <Servicios />

@@ -70,9 +70,10 @@ export default function Contacto() {
       ref={contactoRef}
       className=" py-12 md:py-24 lg:py-32 w-full scroll-mt-20"
     >
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
         transition={{ duration: 0.8 }}
         className="container mx-auto px-4"
       >
@@ -107,53 +108,69 @@ export default function Contacto() {
             >
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div className="relative">
+                  <label htmlFor="nombre" className="sr-only">Nombre completo</label>
                   <input
                     {...register("nombre")}
                     id="nombre"
                     placeholder="Tu nombre"
+                    aria-required="true"
+                    aria-invalid={errors.nombre ? "true" : "false"}
+                    aria-describedby={errors.nombre ? "nombre-error" : undefined}
                     className="w-full px-4 py-3 bg-gray-700/50 border-2 border-purple-500/50 rounded-lg text-white focus:outline-none focus:border-purple-500 transition-all"
                   />
-                  {errors.nombre && <p className="text-red-400 text-xs mt-1">{errors.nombre.message}</p>}
+                  {errors.nombre && <p id="nombre-error" className="text-red-400 text-xs mt-1" role="alert">{errors.nombre.message}</p>}
                 </div>
-                
+
                 <div className="relative">
+                  <label htmlFor="email" className="sr-only">Correo electrónico</label>
                   <input
                     {...register("email")}
                     id="email"
                     type="email"
                     placeholder="Tu email"
+                    aria-required="true"
+                    aria-invalid={errors.email ? "true" : "false"}
+                    aria-describedby={errors.email ? "email-error" : undefined}
                     className="w-full px-4 py-3 bg-gray-700/50 border-2 border-purple-500/50 rounded-lg text-white focus:outline-none focus:border-purple-500 transition-all"
                   />
-                  {errors.email && <p className="text-red-400 text-xs mt-1">{errors.email.message}</p>}
+                  {errors.email && <p id="email-error" className="text-red-400 text-xs mt-1" role="alert">{errors.email.message}</p>}
                 </div>
               </div>
               
               <div className="relative">
+                <label htmlFor="telefono" className="sr-only">Teléfono</label>
                 <input
                   {...register("telefono")}
                   id="telefono"
                   type="tel"
                   placeholder="Tu teléfono (opcional)"
+                  aria-required="false"
                   className="w-full px-4 py-3 bg-gray-700/50 border-2 border-purple-500/50 rounded-lg text-white focus:outline-none focus:border-purple-500 transition-all"
                 />
               </div>
-              
+
               <div className="relative">
+                <label htmlFor="mensaje" className="sr-only">Mensaje</label>
                 <textarea
                   {...register("mensaje")}
                   id="mensaje"
                   rows={6}
                   placeholder="Tu mensaje"
+                  aria-required="true"
+                  aria-invalid={errors.mensaje ? "true" : "false"}
+                  aria-describedby={errors.mensaje ? "mensaje-error" : "mensaje-help"}
                   className="w-full px-4 py-3 bg-gray-700/50 border-2 border-purple-500/50 rounded-lg text-white focus:outline-none focus:border-purple-500 transition-all resize-none"
                 ></textarea>
-                {errors.mensaje && <p className="text-red-400 text-xs mt-1">{errors.mensaje.message}</p>}
-                <p className="text-gray-400 text-sm mt-2">
+                {errors.mensaje && <p id="mensaje-error" className="text-red-400 text-xs mt-1" role="alert">{errors.mensaje.message}</p>}
+                <p id="mensaje-help" className="text-gray-300 text-sm mt-2">
                   Contanos sobre tu proyecto, ideas o cualquier consulta que tengas. Estamos para ayudarte.
                 </p>
               </div>
               
               <Button
                 type="submit"
+                aria-label="Enviar formulario de contacto"
+                aria-busy={isSubmitting}
                 className="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-4 px-6 rounded-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 relative overflow-hidden"
                 disabled={isSubmitting}
               >

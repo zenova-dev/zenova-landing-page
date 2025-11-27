@@ -1,0 +1,37 @@
+<svg width="1200" height="630" xmlns="http://www.w3.org/2000/svg">
+  <!-- Fondo degradado -->
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#7c3aed;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1e1b4b;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <rect width="1200" height="630" fill="url(#bgGradient)"/>
+
+  <!-- Patrón de grid -->
+  <pattern id="gridPattern" width="50" height="50" patternUnits="userSpaceOnUse">
+    <path d="M 50 0 L 0 0 0 50" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+  </pattern>
+  <rect width="1200" height="630" fill="url(#gridPattern)" opacity="0.3"/>
+
+  <!-- Texto principal -->
+  <text x="600" y="280" font-family="Arial, sans-serif" font-size="72" font-weight="bold" fill="white" text-anchor="middle">
+    Zenova Tech
+  </text>
+
+  <!-- Subtítulo -->
+  <text x="600" y="350" font-family="Arial, sans-serif" font-size="36" fill="#e9d5ff" text-anchor="middle">
+    Innovación Digital a tu Alcance
+  </text>
+
+  <!-- Descripción -->
+  <text x="600" y="420" font-family="Arial, sans-serif" font-size="24" fill="#d8b4fe" text-anchor="middle">
+    Desarrollo Web • Apps Móviles • Inteligencia Artificial
+  </text>
+
+  <!-- URL -->
+  <text x="600" y="550" font-family="Arial, sans-serif" font-size="20" fill="#c084fc" text-anchor="middle">
+    www.zenova.tech
+  </text>
+</svg>

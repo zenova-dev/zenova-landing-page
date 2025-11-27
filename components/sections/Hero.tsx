@@ -7,9 +7,10 @@ export default function Hero() {
   return (
     <section className="relative overflow-hidden bg-gradient-to-b from-purple-900 via-gray-900 to-gray-950 w-full min-h-screen flex items-center scroll-mt-20">
       <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))]"></div>
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
         transition={{ duration: 0.8 }}
         className="relative mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl container"
       >

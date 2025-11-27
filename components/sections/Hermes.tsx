@@ -17,9 +17,10 @@ export default function Hermes() {
 
   return (
     <section id="hermes" className="bg-gradient-to-b from-gray-800 via-gray-900 to-gray-950 py-24 w-full scroll-mt-20">
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
         transition={{ duration: 0.8 }}
         className="mx-auto px-4 md:px-6 max-w-7xl container"
       >
@@ -32,6 +33,7 @@ export default function Hermes() {
           <motion.div
             initial={{ opacity: 0, x: -50 }}
             whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
             transition={{ duration: 0.5 }}
             className="space-y-6"
           >
@@ -61,6 +63,7 @@ export default function Hermes() {
           <motion.div
             initial={{ opacity: 0, x: 50 }}
             whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
             transition={{ duration: 0.5 }}
             className="relative w-full aspect-square"
           >
@@ -69,11 +72,14 @@ export default function Hermes() {
             </div>
             <div className="absolute inset-0 flex items-center justify-center">
               <Image
-                src="/images/hermes.png" 
-                alt="Hermes AI Assistant Preview" 
+                src="/images/hermes.png"
+                alt="Hermes - Asistente virtual con inteligencia artificial para mejorar la atención al cliente"
                 className="w-2/3 h-2/3 object-contain z-10 p-8"
                 width={400}
                 height={400}
+                loading="lazy"
+                quality={85}
+                sizes="(max-width: 768px) 66vw, 400px"
               />
             </div>
           </motion.div>
@@ -85,6 +91,7 @@ export default function Hermes() {
               key={index}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
               className="bg-gray-800 p-6 rounded-lg shadow-lg transform hover:-translate-y-2 transition-all duration-300"
             >
