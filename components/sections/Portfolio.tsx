@@ -1,101 +1,181 @@
 "use client";
 
-import { useState } from 'react';
+import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Card } from "../ui/card";
 import { cn } from "@/lib/utils";
+import { useBreakpoint } from "@/hooks/useBreakpoint";
 
 interface Project {
   title: string;
   subtitle: string;
   tags: string[];
-  gradientClasses: string;
-  colors: {
-    border: string;
-    glow: string;
-    accent: string;
-    tagBg: string;
-    tagBorder: string;
-  };
   caseStudyUrl: string;
 }
 
 const projects: Project[] = [
   {
     title: "BEEHUB",
-    subtitle: "Plataforma de coesión y comunicación de alto rendimiento",
+    subtitle: "Plataforma de coesión y comunicación de alto rendimiento para empresas modernas",
     tags: ["SaaS", "CRM / SaaS"],
-    gradientClasses: "from-purple-600 to-pink-600",
-    colors: {
-      border: '#9333ea',
-      glow: '#9333ea',
-      accent: '#c084fc',
-      tagBg: '#9333ea1a',
-      tagBorder: '#9333ea4d',
-    },
     caseStudyUrl: "#beehub-case-study",
   },
   {
     title: "HERMES AI",
     subtitle: "Asistente virtual inteligente que reduce costos de atención en 70%",
     tags: ["IA", "Automatización"],
-    gradientClasses: "from-blue-600 to-purple-600",
-    colors: {
-      border: '#2563eb',
-      glow: '#2563eb',
-      accent: '#60a5fa',
-      tagBg: '#2563eb1a',
-      tagBorder: '#2563eb4d',
-    },
     caseStudyUrl: "#hermes-case-study",
   },
   {
     title: "AGENDO",
     subtitle: "Gestión integral SaaS multiagenda para clínicas médicas",
     tags: ["Salud", "CRM / SaaS"],
-    gradientClasses: "from-teal-600 to-blue-600",
-    colors: {
-      border: '#0d9488',
-      glow: '#0d9488',
-      accent: '#2dd4bf',
-      tagBg: '#0d94881a',
-      tagBorder: '#0d94884d',
-    },
     caseStudyUrl: "#agendo-case-study",
   },
   {
     title: "HOLLY'S BURGER",
     subtitle: "Sistema de pedidos conversacional totalmente por inteligencia Artificial",
     tags: ["Restaurante", "UI / Mobile"],
-    gradientClasses: "from-orange-600 to-red-600",
-    colors: {
-      border: '#ea580c',
-      glow: '#ea580c',
-      accent: '#fb923c',
-      tagBg: '#ea580c1a',
-      tagBorder: '#ea580c4d',
-    },
     caseStudyUrl: "#hollys-case-study",
   },
 ];
 
-export default function Portfolio() {
-  const [activeFilter, setActiveFilter] = useState('Todos');
+interface ProjectRowProps {
+  project: Project;
+  index: number;
+  isReversed: boolean;
+}
 
-  // Extract all unique tags from projects
-  const allTags = Array.from(new Set(projects.flatMap(p => p.tags)));
-  const filterOptions = ['Todos', ...allTags];
-
-  // Filter projects
-  const filteredProjects = activeFilter === 'Todos'
-    ? projects
-    : projects.filter(p => p.tags.includes(activeFilter));
+function ProjectRow({ project, index, isReversed }: ProjectRowProps) {
+  const breakpoint = useBreakpoint();
+  const isMobile = breakpoint === "mobile";
 
   return (
-    <section
-      id="portfolio"
-      className="scroll-mt-36 py-20 px-6 bg-[#0a0a0a]"
+    <motion.div
+      initial={{ opacity: 0, y: 50 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-100px" }}
+      transition={{ duration: 0.6, delay: index * 0.1 }}
+      className={cn(
+        "grid gap-8 md:gap-12 items-center",
+        isMobile ? "grid-cols-1" : "grid-cols-2"
+      )}
     >
+      {/* Placeholder Visual */}
+      <div
+        className={cn(
+          "relative h-[350px] md:h-[450px] lg:h-[500px] rounded-2xl overflow-hidden",
+          isMobile && "order-1",
+          !isMobile && isReversed && "order-2"
+        )}
+      >
+        <div className="absolute inset-0 bg-gradient-to-br from-neon-green/20 via-neon-blue/10 to-neon-purple/20 rounded-2xl" />
+        <div className="absolute inset-0 bg-dark-card/50 backdrop-blur-sm rounded-2xl border border-dark-border" />
+        <div className="absolute inset-0 flex items-center justify-center">
+          <span className="text-6xl md:text-8xl font-bold text-white/10">
+            {project.title.charAt(0)}
+          </span>
+        </div>
+      </div>
+
+      {/* Text Content */}
+      <div
+        className={cn(
+          "space-y-6",
+          isMobile && "order-2 text-center",
+          !isMobile && isReversed && "order-1 text-right",
+          !isMobile && !isReversed && "text-left"
+        )}
+      >
+        <motion.h3
+          className="text-3xl md:text-4xl lg:text-5xl font-bold text-white"
+          initial={{ opacity: 0, x: isReversed ? 30 : -30 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+        >
+          {project.title}
+        </motion.h3>
+
+        <motion.p
+          className="text-gray-400 text-base md:text-lg leading-relaxed max-w-lg"
+          style={{ marginLeft: isMobile || !isReversed ? 0 : "auto" }}
+          initial={{ opacity: 0, x: isReversed ? 30 : -30 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: 0.3 }}
+        >
+          {project.subtitle}
+        </motion.p>
+
+        <motion.div
+          className={cn(
+            "flex flex-wrap gap-2",
+            isMobile && "justify-center",
+            !isMobile && isReversed && "justify-end",
+            !isMobile && !isReversed && "justify-start"
+          )}
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: 0.4 }}
+        >
+          {project.tags.map((tag) => (
+            <span
+              key={tag}
+              className="px-3 py-1.5 bg-neon-green/10 border border-neon-green/30 text-neon-green text-sm font-medium rounded-full"
+            >
+              {tag}
+            </span>
+          ))}
+        </motion.div>
+
+        <motion.a
+          href={project.caseStudyUrl}
+          className={cn(
+            "inline-flex items-center gap-2 text-neon-green font-medium hover:text-white transition-colors group",
+            isMobile && "justify-center",
+            !isMobile && isReversed && "justify-end w-full"
+          )}
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: 0.5 }}
+        >
+          Ver caso completo
+          <svg
+            className="w-5 h-5 transform group-hover:translate-x-1 transition-transform"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M17 8l4 4m0 0l-4 4m4-4H3"
+            />
+          </svg>
+        </motion.a>
+      </div>
+    </motion.div>
+  );
+}
+
+export default function Portfolio() {
+  const [activeFilter, setActiveFilter] = useState("Todos");
+
+  // Extract all unique tags from projects
+  const allTags = Array.from(new Set(projects.flatMap((p) => p.tags)));
+  const filterOptions = ["Todos", ...allTags];
+
+  // Filter projects
+  const filteredProjects =
+    activeFilter === "Todos"
+      ? projects
+      : projects.filter((p) => p.tags.includes(activeFilter));
+
+  return (
+    <section id="portfolio" className="scroll-mt-36 py-20 md:py-32 px-6 bg-[#0a0a0a]">
       <div className="max-w-7xl mx-auto">
         {/* Title */}
         <motion.div
@@ -103,16 +183,26 @@ export default function Portfolio() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="text-center mb-16"
+          className="text-center mb-12 md:mb-20"
         >
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white">
-            NUESTRO TRABAJO HABLA POR NOSOTROS.
-            {activeFilter !== 'Todos' && (
-              <span className="block text-neon-green text-2xl md:text-3xl mt-4">
-                {filteredProjects.length} {filteredProjects.length === 1 ? 'proyecto' : 'proyectos'} en {activeFilter}
-              </span>
-            )}
+          <h2 className="text-3xl md:text-5xl lg:text-6xl font-bold text-white tracking-tight">
+            NUESTRO TRABAJO HABLA
+            <br />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-neon-green to-cyan-400">
+              POR NOSOTROS.
+            </span>
           </h2>
+          {activeFilter !== "Todos" && (
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="text-gray-400 mt-4 text-lg"
+            >
+              {filteredProjects.length}{" "}
+              {filteredProjects.length === 1 ? "proyecto" : "proyectos"} en{" "}
+              <span className="text-neon-green">{activeFilter}</span>
+            </motion.p>
+          )}
         </motion.div>
 
         {/* Filter buttons */}
@@ -121,14 +211,14 @@ export default function Portfolio() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.2 }}
-          className="flex flex-wrap justify-center gap-3 mb-12"
+          className="flex flex-wrap justify-center gap-3 mb-16 md:mb-24"
         >
           {filterOptions.map((filter) => (
             <button
               key={filter}
               onClick={() => setActiveFilter(filter)}
               className={cn(
-                "px-4 py-2 rounded-full text-sm font-medium transition-all duration-300",
+                "px-5 py-2.5 rounded-full text-sm font-medium transition-all duration-300",
                 activeFilter === filter
                   ? "bg-neon-green text-black shadow-lg shadow-neon-green/30"
                   : "bg-dark-card border border-dark-border text-gray-400 hover:border-neon-green/50 hover:text-white"
@@ -141,7 +231,7 @@ export default function Portfolio() {
           ))}
         </motion.div>
 
-        {/* Projects Grid */}
+        {/* Projects List - Vertical Layout */}
         <AnimatePresence mode="wait">
           <motion.div
             key={activeFilter}
@@ -149,110 +239,28 @@ export default function Portfolio() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3 }}
-            className="grid grid-cols-1 md:grid-cols-2 gap-8"
+            className="space-y-24 md:space-y-32"
           >
             {filteredProjects.map((project, index) => (
-              <motion.a
+              <ProjectRow
                 key={project.title}
-                href={project.caseStudyUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="block group"
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
-              >
-              <Card
-                className="bg-zinc-900 border-zinc-800 overflow-hidden cursor-pointer transition-all duration-300 hover:border-opacity-60 hover:shadow-2xl"
-                style={{
-                  borderColor: `${project.colors.border}33`,
-                }}
-              >
-                <motion.div
-                  whileHover={{ scale: 1.02, y: -4 }}
-                  transition={{ duration: 0.3, ease: "easeOut" }}
-                  className="h-full relative"
-                >
-                  {/* Gradient Placeholder */}
-                  <div
-                    className={`w-full h-48 bg-gradient-to-br ${project.gradientClasses} relative overflow-hidden group-hover:brightness-110 transition-all duration-300`}
-                  >
-                    <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors duration-300" />
-                  </div>
-
-                  {/* Content */}
-                  <div className="p-5 space-y-3">
-                    {/* Title */}
-                    <h3
-                      className="text-xl md:text-2xl font-bold text-white transition-all duration-300 group-hover:text-opacity-90"
-                      style={{
-                        color: 'white'
-                      }}
-                    >
-                      {project.title}
-                    </h3>
-
-                    {/* Subtitle */}
-                    <p className="text-gray-400 text-xs md:text-sm leading-relaxed">
-                      {project.subtitle}
-                    </p>
-
-                    {/* Tags */}
-                    <div className="flex flex-wrap gap-2 pt-1">
-                      {project.tags.map((tag) => (
-                        <span
-                          key={tag}
-                          className="px-2.5 py-0.5 text-xs font-medium rounded-full border transition-colors duration-200"
-                          style={{
-                            backgroundColor: project.colors.tagBg,
-                            color: project.colors.accent,
-                            borderColor: project.colors.tagBorder,
-                          }}
-                        >
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Hover overlay */}
-                  <div className="absolute inset-0 bg-black/70 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center gap-3 pointer-events-none">
-                    <svg
-                      className="w-12 h-12 text-white animate-pulse"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
-                      />
-                    </svg>
-                    <span
-                      className="text-white font-bold text-lg"
-                      style={{ color: project.colors.accent }}
-                    >
-                      Ver caso completo →
-                    </span>
-                  </div>
-                </motion.div>
-              </Card>
-              </motion.a>
+                project={project}
+                index={index}
+                isReversed={index % 2 !== 0}
+              />
             ))}
 
             {filteredProjects.length === 0 && (
               <motion.div
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="col-span-full text-center py-20"
+                className="text-center py-20"
               >
                 <p className="text-gray-400 text-lg mb-2">
                   No hay proyectos con este tag
                 </p>
                 <button
-                  onClick={() => setActiveFilter('Todos')}
+                  onClick={() => setActiveFilter("Todos")}
                   className="text-neon-green hover:underline"
                 >
                   Ver todos los proyectos →

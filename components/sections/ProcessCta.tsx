@@ -1,7 +1,7 @@
 "use client";
-import React, { useState } from "react";
-import { Search, Palette, Rocket, HeartHandshake, ArrowRight, ChevronRight } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import React from "react";
+import { Search, Palette, Rocket, HeartHandshake, Sparkles, ChevronRight } from "lucide-react";
+import { motion } from "framer-motion";
 import { Button } from "../ui/button";
 import { cn } from "@/lib/utils";
 
@@ -108,13 +108,91 @@ const steps = [
   },
 ];
 
+// StepCard Component con toda la información visible
+interface StepCardProps {
+  step: typeof steps[0];
+  index: number;
+}
+
+const StepCard = ({ step, index }: StepCardProps) => {
+  const details = stepDetails[step.number];
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{
+        duration: 0.5,
+        delay: index * 0.1,
+        ease: "easeOut"
+      }}
+      className={cn(
+        "bg-dark-card border-2 rounded-2xl p-6",
+        "hover:-translate-y-1 transition-all duration-300",
+        "flex flex-col h-full",
+        stepColorMap[step.color].borderColor,
+        stepColorMap[step.color].glowColor
+      )}
+    >
+      {/* Header: Badge + Icono */}
+      <div className="flex items-center justify-between mb-4">
+        <span className={cn(
+          "text-xs font-bold px-3 py-1 rounded",
+          stepColorMap[step.color].bgGradient,
+          stepColorMap[step.color].iconColor
+        )}>
+          PASO {step.number}
+        </span>
+
+        <div className={cn(
+          "w-12 h-12 rounded-full flex items-center justify-center",
+          stepColorMap[step.color].bgGradient
+        )}>
+          <step.icon className={cn("w-6 h-6", stepColorMap[step.color].iconColor)} />
+        </div>
+      </div>
+
+      {/* Título */}
+      <h3 className="text-white text-lg font-bold mb-3 leading-tight">
+        {step.title}
+      </h3>
+
+      {/* Descripción */}
+      <p className="text-gray-400 text-sm mb-4 leading-relaxed">
+        {details.description}
+      </p>
+
+      {/* Entregables (primeros 3) */}
+      <div className="mb-4 flex-grow">
+        <p className={cn(
+          "text-xs font-semibold mb-2",
+          stepColorMap[step.color].iconColor
+        )}>
+          Entregables clave:
+        </p>
+        <ul className="space-y-1">
+          {details.deliverables.slice(0, 3).map((item, i) => (
+            <li key={i} className="text-gray-400 text-xs flex items-start gap-2">
+              <span className={stepColorMap[step.color].iconColor}>✓</span>
+              <span>{item}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      {/* Footer: Duración */}
+      <div className="pt-3 border-t border-dark-border mt-auto">
+        <p className="text-gray-500 text-xs">
+          <span className="text-gray-400 font-semibold">Duración:</span>{" "}
+          {details.duration}
+        </p>
+      </div>
+    </motion.div>
+  );
+};
+
 export default function ProcessCta() {
-  const [expandedStep, setExpandedStep] = useState<number | null>(null);
-
-  const toggleStep = (stepNumber: number) => {
-    setExpandedStep(expandedStep === stepNumber ? null : stepNumber);
-  };
-
   return (
     <section id="proceso" className="bg-gradient-to-b from-dark-bg to-black py-20 px-6 scroll-mt-36">
       <div className="container mx-auto max-w-7xl">
@@ -136,182 +214,76 @@ export default function ProcessCta() {
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16">
-
-          {/* PROCESS - Columna Izquierda */}
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
-            className="space-y-8"
-          >
-            {/* Timeline Horizontal en desktop, vertical en mobile */}
-            <div className="flex flex-col lg:flex-row items-center lg:items-start justify-between gap-6 lg:gap-4">
+        {/* Main Grid: Steps 2x2 (70%) + CTA Sidebar (30%) */}
+        <div className="grid grid-cols-1 lg:grid-cols-10 gap-8">
+          {/* Grid 2x2 de Steps - 7 columnas (70%) */}
+          <div className="lg:col-span-7">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {steps.map((step, index) => (
-                <React.Fragment key={step.number}>
-                  {/* Step Card */}
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: index * 0.1 }}
-                    className="w-full lg:w-auto lg:flex-1"
-                  >
-                    {/* Step number label */}
-                    <p className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3 text-center">
-                      PASO {step.number}
-                    </p>
-
-                    <button
-                      onClick={() => toggleStep(step.number)}
-                      className="w-full group relative cursor-pointer"
-                      aria-expanded={expandedStep === step.number}
-                      aria-label={`${expandedStep === step.number ? 'Cerrar' : 'Ver'} detalles de ${step.title}`}
-                    >
-                      {/* Card - Larger and more spacious */}
-                      <div className={cn(
-                        "bg-dark-card border-2 rounded-2xl p-6 lg:p-8 transition-all duration-300 hover:-translate-y-2 min-h-[240px] lg:min-h-[280px] flex flex-col justify-between",
-                        stepColorMap[step.color].borderColor,
-                        stepColorMap[step.color].glowColor,
-                        expandedStep === step.number && 'ring-2 ring-neon-green/50'
-                      )}>
-                        {/* Icon circle - larger */}
-                        <div className={cn(
-                          "w-16 h-16 lg:w-20 lg:h-20 mx-auto mb-4 lg:mb-6 rounded-full flex items-center justify-center transition-transform group-hover:scale-110",
-                          stepColorMap[step.color].bgGradient
-                        )}>
-                          <step.icon className={cn("w-8 h-8 lg:w-10 lg:h-10", stepColorMap[step.color].iconColor)} />
-                        </div>
-
-                        {/* Title - larger and bolder */}
-                        <p className="text-white text-center text-base lg:text-lg font-bold leading-tight mb-3 lg:mb-4">
-                          {step.title}
-                        </p>
-
-                        {/* Click indicator - more prominent */}
-                        <p className="text-gray-400 text-center text-xs lg:text-sm group-hover:text-neon-green transition-colors font-medium">
-                          {expandedStep === step.number ? '↑ Ver menos' : '↓ Ver detalles'}
-                        </p>
-                      </div>
-                    </button>
-                  </motion.div>
-
-                  {/* Circular arrow between steps (except last) - Desktop */}
-                  {index < steps.length - 1 && (
-                    <motion.div
-                      initial={{ opacity: 0, scale: 0.8 }}
-                      whileInView={{ opacity: 1, scale: 1 }}
-                      viewport={{ once: true }}
-                      transition={{ delay: index * 0.1 + 0.2 }}
-                      className="hidden lg:flex items-center justify-center flex-shrink-0"
-                    >
-                      <div className="w-10 h-10 rounded-full border-2 border-neon-green/30 flex items-center justify-center bg-dark-bg/50">
-                        <ArrowRight className="w-5 h-5 text-neon-green" />
-                      </div>
-                    </motion.div>
-                  )}
-
-                  {/* Down arrow on mobile */}
-                  {index < steps.length - 1 && (
-                    <div className="lg:hidden flex justify-center w-full py-2">
-                      <div className="w-8 h-8 rounded-full border-2 border-neon-green/30 flex items-center justify-center bg-dark-bg/50">
-                        <ArrowRight className="w-4 h-4 text-neon-green rotate-90" />
-                      </div>
-                    </div>
-                  )}
-                </React.Fragment>
+                <StepCard key={step.number} step={step} index={index} />
               ))}
             </div>
+          </div>
 
-            {/* Expandable details panel - OUTSIDE timeline, appears below */}
-            <AnimatePresence>
-              {expandedStep !== null && (
-                <motion.div
-                  initial={{ height: 0, opacity: 0 }}
-                  animate={{ height: 'auto', opacity: 1 }}
-                  exit={{ height: 0, opacity: 0 }}
-                  transition={{ duration: 0.3 }}
-                  className="overflow-hidden"
-                >
-                  <div className="bg-dark-bg border border-dark-border rounded-lg p-6 lg:p-8 space-y-4 mt-6">
-                    <div className="flex items-center gap-3 mb-4">
-                      <div className={cn(
-                        "w-12 h-12 rounded-full flex items-center justify-center",
-                        stepColorMap[steps[expandedStep - 1].color].bgGradient
-                      )}>
-                        {React.createElement(steps[expandedStep - 1].icon, {
-                          className: cn("w-6 h-6", stepColorMap[steps[expandedStep - 1].color].iconColor)
-                        })}
-                      </div>
-                      <h3 className="text-white font-bold text-xl">
-                        Paso {expandedStep}: {steps[expandedStep - 1].title}
-                      </h3>
-                    </div>
-
-                    <p className="text-gray-300 text-sm lg:text-base leading-relaxed">
-                      {stepDetails[expandedStep].description}
-                    </p>
-
-                    <div>
-                      <p className="text-neon-green font-semibold text-sm mb-3">
-                        Entregables:
-                      </p>
-                      <ul className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                        {stepDetails[expandedStep].deliverables.map((item, i) => (
-                          <li key={i} className="text-gray-400 text-sm flex items-start gap-2">
-                            <span className="text-neon-green mt-1">✓</span>
-                            <span>{item}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-
-                    <div className="pt-4 border-t border-dark-border">
-                      <p className="text-gray-400 text-sm">
-                        <span className="text-white font-semibold">Duración estimada:</span> {stepDetails[expandedStep].duration}
-                      </p>
-                    </div>
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </motion.div>
-
-          {/* CTA - Columna Derecha */}
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
-            className="flex flex-col justify-center items-center text-center space-y-6 bg-gradient-to-br from-dark-card/50 to-black/50 p-8 lg:p-12 rounded-2xl border border-dark-border"
-          >
-            {/* Título con gradiente */}
-            <h2 className="font-bold text-4xl md:text-5xl lg:text-6xl leading-tight">
-              <span className="block bg-clip-text text-transparent bg-gradient-to-r from-purple-400 via-pink-500 to-purple-600">
-                ¿TENÉS UNA IDEA
-              </span>
-              <span className="block bg-clip-text text-transparent bg-gradient-to-r from-purple-400 via-pink-500 to-purple-600">
-                QUE TE QUITA EL SUEÑO?
-              </span>
-            </h2>
-
-            {/* Descripción */}
-            <p className="text-gray-300 text-lg max-w-md">
-              Deja de darle vueltas. Agendá una consulta gratis de 30 min y recibí feedback honesto.
-            </p>
-
-            {/* CTA Button */}
-            <a href="#contacto">
-              <Button
-                size="lg"
-                className="bg-neon-green hover:bg-neon-green/90 text-black font-bold text-lg px-8 py-6 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg shadow-neon-green/30"
+          {/* CTA Sidebar - 3 columnas (30%) */}
+          <div className="lg:col-span-3">
+            <div className="lg:sticky lg:top-24">
+              <motion.div
+                initial={{ opacity: 0, x: 20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.8, delay: 0.4 }}
+                className={cn(
+                  "bg-gradient-to-br from-purple-900/30 via-pink-900/30 to-purple-900/30",
+                  "border-2 border-purple-500/50 rounded-3xl p-8",
+                  "backdrop-blur-md",
+                  "hover:border-purple-400 hover:shadow-2xl hover:shadow-purple-500/40",
+                  "transition-all duration-300",
+                  "flex flex-col justify-center items-center text-center",
+                  "min-h-[400px] lg:min-h-[600px]"
+                )}
               >
-                AGENDAR KICKOFF
-                <ChevronRight className="ml-2 w-5 h-5" />
-              </Button>
-            </a>
-          </motion.div>
+                {/* Icono decorativo */}
+                <div className="w-16 h-16 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center mb-6">
+                  <Sparkles className="w-8 h-8 text-white" />
+                </div>
+
+                {/* Título gradient */}
+                <h3 className="font-bold text-3xl lg:text-4xl leading-tight mb-6">
+                  <span className="block bg-clip-text text-transparent bg-gradient-to-r from-purple-400 via-pink-500 to-purple-600">
+                    ¿TENÉS UNA
+                  </span>
+                  <span className="block bg-clip-text text-transparent bg-gradient-to-r from-purple-400 via-pink-500 to-purple-600">
+                    IDEA QUE TE
+                  </span>
+                  <span className="block bg-clip-text text-transparent bg-gradient-to-r from-purple-400 via-pink-500 to-purple-600">
+                    QUITA EL SUEÑO?
+                  </span>
+                </h3>
+
+                {/* Descripción */}
+                <p className="text-gray-300 text-base mb-8 max-w-xs leading-relaxed">
+                  Dejá de darle vueltas. Agendá una consulta gratis de 30 min y recibí feedback honesto.
+                </p>
+
+                {/* CTA Button */}
+                <a href="#contacto" className="w-full">
+                  <Button
+                    size="lg"
+                    className="w-full bg-neon-green hover:bg-neon-green/90 text-black font-bold text-lg px-8 py-6 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg shadow-neon-green/30"
+                  >
+                    AGENDAR KICKOFF
+                    <ChevronRight className="ml-2 w-6 h-6" />
+                  </Button>
+                </a>
+
+                {/* Trust indicator */}
+                <p className="text-gray-500 text-xs mt-6">
+                  ✓ Sin compromiso · ✓ 30 minutos · ✓ 100% gratis
+                </p>
+              </motion.div>
+            </div>
+          </div>
         </div>
       </div>
     </section>
