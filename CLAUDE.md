@@ -4,73 +4,51 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a Next.js 14 landing page for Zenova Tech, a technology consulting company. The site is built with TypeScript, Tailwind CSS, and includes a contact form with email functionality.
+This is a Next.js 16 landing page for Zenova Tech, a technology consulting company. The site is built with TypeScript, Tailwind CSS, and includes a contact form with email functionality.
 
 ## Commands
 
-### Development
 - `npm run dev` - Start development server on localhost:3000
 - `npm run build` - Build production application
 - `npm run start` - Start production server
 - `npm run lint` - Run ESLint for code quality checks
 
-### Environment Setup
+## Environment Setup
+
 The application requires email environment variables for the contact form:
 - `EMAIL_USER` - Gmail account for sending emails
-- `EMAIL_PASS` - App password for the Gmail account
+- `EMAIL_PASS` - App password for the Gmail account (not regular password)
 
 ## Architecture
 
-### Component Structure
-The main landing page (`components/zenova-landing.tsx`) is composed of modular sections:
-- `Hero` - Main banner and call-to-action
-- `Servicios` - Services offered
-- `PorQueNosotros` - Why choose us section  
-- `Hermes` - Product showcase
-- `Contacto` - Contact form with email integration
+### Page Composition
+The main landing page (`components/zenova-landing.tsx`) orchestrates modular sections with performance optimizations:
+- Hero section loads immediately
+- Below-the-fold sections (Stats, Servicios, Portfolio, ProcessCta, Testimonials, Contacto) use `next/dynamic` with skeleton loading states
 
-### UI Components
-Uses shadcn/ui component library with customized styling:
-- Components located in `components/ui/`
-- Configured via `components.json` with New York style
-- Path aliases: `@/` points to project root
+### Component Organization
+```
+components/
+├── sections/          # Page sections (Hero, Servicios, Portfolio, etc.)
+├── ui/                # Reusable UI components (shadcn/ui based)
+├── zenova-landing.tsx # Main page composition
+└── nav-bar.tsx        # Navigation component
+```
 
 ### Styling System
-- Tailwind CSS with custom color scheme (purple/gray theme)
-- CSS variables for theming defined in `app/globals.css`
-- Custom font loading using Geist Sans and Geist Mono
+- Tailwind CSS with custom dark theme colors defined as CSS variables in `app/globals.css`
+- Key custom colors: `dark-bg`, `dark-card`, `dark-border`, `neon-green`
+- shadcn/ui components configured via `components.json` with New York style
+- Path aliases: `@/` points to project root
 
 ### API Routes
-- `app/api/send-email/route.ts` - Handles contact form submissions via nodemailer
-- Sends emails to hardcoded recipient: `stoviatandil@gmail.com`
+- `app/api/send-email/route.ts` - Contact form submissions via nodemailer (sends to `stoviatandil@gmail.com`)
 
 ### Form Handling
-Contact forms use:
-- `react-hook-form` for form management
-- `zod` for validation schemas
-- `framer-motion` for animations
-
-## Key Dependencies
-
-### Core Framework
-- Next.js 14 with App Router
-- React 18
-- TypeScript with strict mode
-
-### Styling & UI
-- Tailwind CSS with animate plugin
-- Radix UI components (icons, slot)
-- Class Variance Authority for component variants
-- Framer Motion for animations
-
-### Form & Validation
-- React Hook Form + Hookform Resolvers
-- Zod for schema validation
-- Nodemailer for email sending
+Contact forms use `react-hook-form` + `zod` validation + `framer-motion` animations.
 
 ## Development Notes
 
 - Site is in Spanish (lang="es" in layout)
-- Uses absolute imports with `@/` prefix
-- All components are functional components using modern React patterns
-- Email functionality requires Gmail app passwords (not regular passwords)
+- Uses Vercel Analytics (`@vercel/analytics`)
+- SEO files: `app/sitemap.ts` and `app/robots.ts`

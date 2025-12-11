@@ -2,42 +2,12 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import Link from "next/link";
+import { ExternalLink } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useBreakpoint } from "@/hooks/useBreakpoint";
-
-interface Project {
-  title: string;
-  subtitle: string;
-  tags: string[];
-  caseStudyUrl: string;
-}
-
-const projects: Project[] = [
-  {
-    title: "BEEHUB",
-    subtitle: "Plataforma de coesión y comunicación de alto rendimiento para empresas modernas",
-    tags: ["SaaS", "CRM / SaaS"],
-    caseStudyUrl: "#beehub-case-study",
-  },
-  {
-    title: "HERMES AI",
-    subtitle: "Asistente virtual inteligente que reduce costos de atención en 70%",
-    tags: ["IA", "Automatización"],
-    caseStudyUrl: "#hermes-case-study",
-  },
-  {
-    title: "AGENDO",
-    subtitle: "Gestión integral SaaS multiagenda para clínicas médicas",
-    tags: ["Salud", "CRM / SaaS"],
-    caseStudyUrl: "#agendo-case-study",
-  },
-  {
-    title: "HOLLY'S BURGER",
-    subtitle: "Sistema de pedidos conversacional totalmente por inteligencia Artificial",
-    tags: ["Restaurante", "UI / Mobile"],
-    caseStudyUrl: "#hollys-case-study",
-  },
-];
+import { projects as allProjects } from "@/data/projects";
+import type { Project } from "@/types/project";
 
 interface ProjectRowProps {
   project: Project;
@@ -129,33 +99,50 @@ function ProjectRow({ project, index, isReversed }: ProjectRowProps) {
           ))}
         </motion.div>
 
-        <motion.a
-          href={project.caseStudyUrl}
+        <motion.div
           className={cn(
-            "inline-flex items-center gap-2 text-neon-green font-medium hover:text-white transition-colors group",
+            "flex flex-wrap gap-4",
             isMobile && "justify-center",
-            !isMobile && isReversed && "justify-end w-full"
+            !isMobile && isReversed && "justify-end",
+            !isMobile && !isReversed && "justify-start"
           )}
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5, delay: 0.5 }}
         >
-          Ver caso completo
-          <svg
-            className="w-5 h-5 transform group-hover:translate-x-1 transition-transform"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
+          <Link
+            href={`/proyectos/${project.slug}`}
+            className="inline-flex items-center gap-2 text-neon-green font-medium hover:text-white transition-colors group"
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M17 8l4 4m0 0l-4 4m4-4H3"
-            />
-          </svg>
-        </motion.a>
+            Ver caso completo
+            <svg
+              className="w-5 h-5 transform group-hover:translate-x-1 transition-transform"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M17 8l4 4m0 0l-4 4m4-4H3"
+              />
+            </svg>
+          </Link>
+
+          {project.externalUrl && (
+            <a
+              href={project.externalUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 text-neon-blue font-medium hover:text-white transition-colors"
+            >
+              <ExternalLink className="w-4 h-4" />
+              Ver demo
+            </a>
+          )}
+        </motion.div>
       </div>
     </motion.div>
   );
@@ -165,14 +152,14 @@ export default function Portfolio() {
   const [activeFilter, setActiveFilter] = useState("Todos");
 
   // Extract all unique tags from projects
-  const allTags = Array.from(new Set(projects.flatMap((p) => p.tags)));
+  const allTags = Array.from(new Set(allProjects.flatMap((p) => p.tags)));
   const filterOptions = ["Todos", ...allTags];
 
   // Filter projects
   const filteredProjects =
     activeFilter === "Todos"
-      ? projects
-      : projects.filter((p) => p.tags.includes(activeFilter));
+      ? allProjects
+      : allProjects.filter((p) => p.tags.includes(activeFilter));
 
   return (
     <section id="portfolio" className="scroll-mt-36 py-20 md:py-32 px-6 bg-[#0a0a0a]">
@@ -243,7 +230,7 @@ export default function Portfolio() {
           >
             {filteredProjects.map((project, index) => (
               <ProjectRow
-                key={project.title}
+                key={project.slug}
                 project={project}
                 index={index}
                 isReversed={index % 2 !== 0}
