@@ -49,6 +49,16 @@ const config: Config = {
   				'3': 'hsl(var(--chart-3))',
   				'4': 'hsl(var(--chart-4))',
   				'5': 'hsl(var(--chart-5))'
+  			},
+  			neon: {
+  				green: '#CCFF00',
+  				blue: '#00D9FF',
+  				purple: '#B967FF',
+  			},
+  			dark: {
+  				bg: '#0a0a0a',
+  				card: '#141414',
+  				border: '#1f1f1f',
   			}
   		},
   		borderRadius: {

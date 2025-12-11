@@ -1,81 +1,112 @@
 "use client";
-import { Code, Smartphone, Brain } from "lucide-react";
+import { Code2, Brain } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardContent } from "../ui/card";
-import { SectionTitle } from "../ui/section-title";
-import { Button } from "../ui/button";
 import { motion } from "framer-motion";
+import { useState, MouseEvent } from "react";
 
 export default function Servicios() {
   const servicios = [
     {
-      name: "Desarrollo Web Avanzado",
-      icon: Code,
-      description: "Creamos sitios web y aplicaciones web de alto rendimiento y diseño atractivo.",
-      color: "from-blue-500 to-cyan-500",
+      name: "Desarrollo de Alto Impacto.",
+      icon: Code2,
+      description: "Soluciones web clarificadas y Apps nativas (iOS/Android) con un stack sólido. Escalables.",
+      tags: ["E-commerce", "SaaS", "Marketplace"],
     },
     {
-      name: "Aplicaciones Móviles",
-      icon: Smartphone,
-      description: "Desarrollamos apps multiplataforma para iOS y Android.",
-      color: "from-purple-500 to-pink-500",
-    },
-    {
-      name: "Inteligencia Artificial",
+      name: "Automatización e Insights Reales.",
       icon: Brain,
-      description: "Implementamos soluciones de IA en tus procesos.",
-      color: "from-green-500 to-emerald-500",
+      description: "Soluciones prácticas de IA para reducir costos, predecir tendencias y automatizar tareas.",
+      tags: ["Automatización", "Machine Learning", "Análisis Predictivo"],
     },
   ];
+
+  const [tilt, setTilt] = useState({ x: 0, y: 0, index: -1 });
+
+  const handleMouseMove = (e: MouseEvent<HTMLDivElement>, index: number) => {
+    const card = e.currentTarget;
+    const rect = card.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+
+    const rotateX = ((y - centerY) / centerY) * -10; // Max 10deg tilt
+    const rotateY = ((x - centerX) / centerX) * 10;
+
+    setTilt({ x: rotateX, y: rotateY, index });
+  };
+
+  const handleMouseLeave = () => {
+    setTilt({ x: 0, y: 0, index: -1 });
+  };
 
   return (
     <section
       id="servicios"
-      className="bg-gradient-to-b from-gray-950 via-gray-900 to-gray-900 py-24 w-full scroll-mt-36"
+      className="relative overflow-hidden bg-dark-bg py-24 w-full scroll-mt-36"
     >
+      <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))]"></div>
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.8 }}
-        className="mx-auto px-4 md:px-6 max-w-7xl container"
+        className="relative mx-auto px-4 md:px-6 max-w-7xl container"
       >
         <div className="mx-auto px-4 md:px-6 max-w-7xl container">
-          <SectionTitle 
-            title="Nuestros Servicios" 
-            subtitle="Soluciones tecnológicas adaptadas a tus necesidades"
-          />
-          <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-3 mb-12">
-            {servicios.map((servicio) => (
-              <Card 
-                key={servicio.name} 
-                className="bg-gray-800 border-none overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1 flex flex-col"
-              >
-                <div className={`h-2 w-full bg-gradient-to-r ${servicio.color}`}></div>
-                <CardHeader className="pt-6">
-                  <div className="w-16 h-16 rounded-full bg-gray-700 flex items-center justify-center mb-4 transition-transform duration-300 group-hover:scale-110">
-                    <servicio.icon className="w-8 h-8 text-white" />
-                  </div>
-                  <CardTitle className="text-white text-2xl mb-2">
-                    {servicio.name}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="flex-grow">
-                  <p className="text-gray-300 text-lg">{servicio.description}</p>
-                </CardContent>
-              </Card>
-            ))}
+          <div className="text-center mb-16">
+            <h2 className="font-extrabold text-4xl sm:text-5xl md:text-6xl tracking-tight leading-tight mb-6">
+              <span className="block text-white">
+                NO SOMOS OTRA{" "}
+                <span className="bg-clip-text text-transparent bg-gradient-to-r from-neon-green to-emerald-400">
+                  FÁBRICA DE CÓDIGO
+                </span>
+              </span>
+              <span className="block text-white">ABURRIDA.</span>
+            </h2>
           </div>
-          <div className="text-center">
-            <a
-              href="#contacto"
-            >
-              <Button 
-                size="lg"
-                className="bg-purple-600 hover:bg-purple-700 text-white text-lg px-8 py-3 rounded-full transition-all duration-300 transform hover:scale-105 cursor-pointer"
+          <div className="grid gap-8 grid-cols-1 lg:grid-cols-2">
+            {servicios.map((servicio, index) => (
+              <div
+                key={servicio.name}
+                onMouseMove={(e) => handleMouseMove(e, index)}
+                onMouseLeave={handleMouseLeave}
+                style={{
+                  transform:
+                    tilt.index === index
+                      ? `perspective(1000px) rotateX(${tilt.x}deg) rotateY(${tilt.y}deg)`
+                      : "perspective(1000px) rotateX(0deg) rotateY(0deg)",
+                  transition: "transform 0.1s ease-out",
+                }}
               >
-                Quiero presupuestar mi proyecto
-              </Button>
-            </a>
+                <Card className="bg-dark-card border border-dark-border overflow-hidden transition-all duration-300 hover:border-neon-green/50 hover:shadow-2xl hover:shadow-neon-green/20 hover:-translate-y-2 flex flex-col group">
+                  <CardHeader className="pt-8 pb-6 px-8">
+                    <div className="w-20 h-20 rounded-full bg-gradient-to-br from-neon-green/20 to-neon-green/5 border border-neon-green/50 flex items-center justify-center mb-6 transition-all duration-300 group-hover:scale-110 group-hover:border-neon-green">
+                      <servicio.icon className="w-10 h-10 text-neon-green" />
+                    </div>
+                    <CardTitle className="text-white text-3xl mb-4 font-bold">
+                      {servicio.name}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="flex-grow px-8 pb-8">
+                    <p className="text-gray-300 text-lg mb-6 leading-relaxed">
+                      {servicio.description}
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      {servicio.tags.map((tag) => (
+                        <span
+                          key={tag}
+                          className="px-3 py-1 bg-neon-green/10 border border-neon-green/30 text-neon-green text-sm rounded-full"
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            ))}
           </div>
         </div>
       </motion.div>

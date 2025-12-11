@@ -1,0 +1,14 @@
+# Allow all crawlers
+User-agent: *
+Allow: /
+
+# Disallow specific paths (add as needed)
+# Disallow: /api/
+# Disallow: /admin/
+
+# Crawl-delay for specific bots (optional)
+# User-agent: Googlebot
+# Crawl-delay: 0
+
+# Sitemap location
+Sitemap: https://www.zenova.tech/sitemap.xml

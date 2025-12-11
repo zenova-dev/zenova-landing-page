@@ -3,10 +3,12 @@
 import { useState, useEffect, useRef } from "react";
 import { Menu, X } from "lucide-react";
 import { Button } from "./ui/button";
+import { cn } from "@/lib/utils";
 
 export function NavBar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [activeSection, setActiveSection] = useState('');
   const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -39,20 +41,46 @@ export function NavBar() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [isMenuOpen]);
 
+  // Intersection Observer para detectar sección activa
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            setActiveSection(entry.target.id);
+          }
+        });
+      },
+      {
+        threshold: 0.5,
+        rootMargin: '-100px 0px -50% 0px'
+      }
+    );
+
+    const sections = ['servicios', 'portfolio', 'proceso', 'contacto'];
+    sections.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) observer.observe(el);
+    });
+
+    return () => observer.disconnect();
+  }, []);
+
   const navItems = [
-    { href: "#servicios", label: "Servicios" },
-    { href: "#por-que-nosotros", label: "¿Por qué elegirnos?" },
-    { href: "#hermes", label: "Hermes" },
-    { href: "#contacto", label: "Contacto" },
+    { href: "#servicios", label: "Servicios", id: "servicios" },
+    { href: "#portfolio", label: "Portfolio", id: "portfolio" },
+    { href: "#proceso", label: "Proceso", id: "proceso" },
+    { href: "#contacto", label: "Contacto", id: "contacto" },
   ];
 
   return (
     <header
       ref={menuRef}
       role="banner"
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled ? "bg-gray-900/95 backdrop-blur supports-[backdrop-filter]:bg-gray-900/60 shadow-lg" : "bg-transparent"
-      }`}
+      className={cn(
+        "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
+        isScrolled ? "bg-dark-bg/95 backdrop-blur supports-[backdrop-filter]:bg-dark-bg/60 shadow-lg" : "bg-transparent"
+      )}
     >
       <div className="flex justify-between items-center mx-auto px-4 md:px-8 h-20 container">
         <a
@@ -70,14 +98,26 @@ export function NavBar() {
           {navItems.map((item) => (
             <a
               key={item.href}
-              className="text-gray-300 hover:text-white transition-colors"
+              className={cn(
+                "transition-colors relative",
+                activeSection === item.id
+                  ? "text-white after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-neon-green"
+                  : "text-gray-300 hover:text-white"
+              )}
               href={item.href}
               aria-label={item.label}
+              aria-current={activeSection === item.id ? 'page' : undefined}
             >
               {item.label}
             </a>
           ))}
         </nav>
+        <Button
+          asChild
+          className="hidden md:block bg-neon-green text-black hover:bg-neon-green/90 font-medium"
+        >
+          <a href="#contacto">Iniciar Proyecto</a>
+        </Button>
         <Button
           variant="outline"
           size="icon"
@@ -93,7 +133,7 @@ export function NavBar() {
       {isMenuOpen && (
         <nav
           id="mobile-menu"
-          className="md:hidden bg-gray-900 p-4"
+          className="md:hidden bg-dark-bg p-4"
           role="navigation"
           aria-label="Menú de navegación móvil"
         >
