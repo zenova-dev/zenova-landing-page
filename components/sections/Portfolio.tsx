@@ -101,10 +101,10 @@ function ProjectRow({ project, index, isReversed }: ProjectRowProps) {
 
         <motion.div
           className={cn(
-            "flex flex-wrap gap-4",
-            isMobile && "justify-center",
-            !isMobile && isReversed && "justify-end",
-            !isMobile && !isReversed && "justify-start"
+            "flex flex-col gap-3",
+            isMobile && "items-center",
+            !isMobile && isReversed && "items-end",
+            !isMobile && !isReversed && "items-start"
           )}
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -179,17 +179,24 @@ export default function Portfolio() {
               POR NOSOTROS.
             </span>
           </h2>
-          {activeFilter !== "Todos" && (
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="text-gray-400 mt-4 text-lg"
-            >
-              {filteredProjects.length}{" "}
-              {filteredProjects.length === 1 ? "proyecto" : "proyectos"} en{" "}
-              <span className="text-neon-green">{activeFilter}</span>
-            </motion.p>
-          )}
+          <div className="h-7 mt-4 overflow-hidden">
+            <AnimatePresence mode="wait">
+              {activeFilter !== "Todos" && (
+                <motion.p
+                  key={activeFilter}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.2 }}
+                  className="text-gray-400 text-lg"
+                >
+                  {filteredProjects.length}{" "}
+                  {filteredProjects.length === 1 ? "proyecto" : "proyectos"} en{" "}
+                  <span className="text-neon-green">{activeFilter}</span>
+                </motion.p>
+              )}
+            </AnimatePresence>
+          </div>
         </motion.div>
 
         {/* Filter buttons */}
@@ -205,10 +212,10 @@ export default function Portfolio() {
               key={filter}
               onClick={() => setActiveFilter(filter)}
               className={cn(
-                "px-5 py-2.5 rounded-full text-sm font-medium transition-all duration-300",
+                "px-5 py-2.5 rounded-full text-sm font-medium transition-colors duration-300 border",
                 activeFilter === filter
-                  ? "bg-neon-green text-black shadow-lg shadow-neon-green/30"
-                  : "bg-dark-card border border-dark-border text-gray-400 hover:border-neon-green/50 hover:text-white"
+                  ? "bg-neon-green text-black border-neon-green"
+                  : "bg-dark-card border-dark-border text-gray-400 hover:border-neon-green/50 hover:text-white"
               )}
               aria-pressed={activeFilter === filter}
               aria-label={`Filtrar por ${filter}`}

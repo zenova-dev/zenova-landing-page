@@ -197,7 +197,7 @@ export function ZenovaLanding() {
             {/* Copyright */}
             <div className="mt-6 text-center">
               <p className="text-gray-500 text-sm">
-                © 2024 Zenova Tech. Todos los derechos reservados.
+                © 2025 Zenova Tech. Todos los derechos reservados.
               </p>
             </div>
           </div>

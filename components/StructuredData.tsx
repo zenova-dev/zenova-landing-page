@@ -7,7 +7,7 @@ export default function StructuredData() {
     url: 'https://www.zenova.tech',
     logo: 'https://www.zenova.tech/favicon.ico',
     description: 'Desarrollo de productos digitales, MVPs y sistemas enterprise. Transformamos ideas en soluciones tecnológicas potentes.',
-    foundingDate: '2024',
+    foundingDate: '2025',
     address: {
       '@type': 'PostalAddress',
       addressCountry: 'AR',
