@@ -5,40 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft, ChevronRight, Quote } from 'lucide-react';
 import { Button } from '../ui/button';
 import { cn } from '@/lib/utils';
-
-interface Testimonial {
-  quote: string;
-  author: string;
-  role: string;
-  company: string;
-}
-
-const testimonials: Testimonial[] = [
-  {
-    quote: "Zenova transformó nuestra idea en un MVP funcional en tiempo récord. Su enfoque ágil y la calidad del código superaron nuestras expectativas.",
-    author: "María González",
-    role: "CEO",
-    company: "TechStart Argentina"
-  },
-  {
-    quote: "El equipo de Zenova no solo desarrolló nuestra plataforma, sino que se convirtieron en verdaderos partners estratégicos. Resultados medibles desde el día uno.",
-    author: "Carlos Rodríguez",
-    role: "CTO",
-    company: "FinTech Solutions"
-  },
-  {
-    quote: "Increíble la velocidad de desarrollo sin sacrificar calidad. La integración de IA que implementaron redujo nuestros costos operativos en un 70%.",
-    author: "Ana Martínez",
-    role: "Product Manager",
-    company: "HealthCare Plus"
-  },
-  {
-    quote: "Trabajar con Zenova fue refrescante. Entendieron nuestra visión y la ejecutaron con excelencia técnica. Recomendados al 100%.",
-    author: "Diego Fernández",
-    role: "Founder",
-    company: "EduTech Latam"
-  }
-];
+import { testimonials } from '@/data/testimonials';
 
 export default function Testimonials() {
   const [currentIndex, setCurrentIndex] = useState(0);
