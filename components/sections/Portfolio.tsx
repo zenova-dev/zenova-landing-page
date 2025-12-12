@@ -33,7 +33,7 @@ function ProjectRow({ project, index, isReversed }: ProjectRowProps) {
       {/* Placeholder Visual */}
       <div
         className={cn(
-          "relative h-[350px] md:h-[450px] lg:h-[500px] rounded-2xl overflow-hidden",
+          "relative h-[250px] md:h-[300px] lg:h-[350px] rounded-2xl overflow-hidden",
           isMobile && "order-1",
           !isMobile && isReversed && "order-2"
         )}
