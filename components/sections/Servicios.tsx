@@ -1,10 +1,113 @@
 "use client";
-import { Lightbulb, Code2, Brain, Check, ArrowRight } from "lucide-react";
+import { Lightbulb, Code2, Brain, Check, ArrowRight, LucideIcon } from "lucide-react";
 import Link from "next/link";
 import { motion } from "framer-motion";
+import { useFocusOnScroll } from "@/hooks/useFocusOnScroll";
+import { useAutoHover } from "@/hooks/useAutoHover";
+import { cn } from "@/lib/utils";
+
+interface Servicio {
+  name: string;
+  icon: LucideIcon;
+  question: string;
+  description: string;
+  features: string[];
+}
+
+interface ServiceCardProps {
+  servicio: Servicio;
+  index: number;
+  variants: {
+    hidden: { opacity: number; y: number };
+    visible: { opacity: number; y: number; transition: object };
+  };
+}
+
+function ServiceCard({ servicio, index, variants }: ServiceCardProps) {
+  const { ref, isAutoHovered } = useAutoHover({
+    enabled: true,
+    threshold: 0.6,
+    duration: 1200,
+    delay: 100 + index * 200, // Stagger el hover entre cards
+  });
+
+  return (
+    <motion.div
+      ref={ref as React.RefObject<HTMLDivElement>}
+      variants={variants}
+      className={cn(
+        "bg-dark-card border border-dark-border rounded-2xl p-8 transition-all duration-300 flex flex-col",
+        "hover:border-neon-green/50 hover:-translate-y-1",
+        isAutoHovered && "border-neon-green/50 -translate-y-1"
+      )}
+    >
+      {/* Ícono */}
+      <div className={cn(
+        "w-16 h-16 rounded-full bg-gradient-to-br from-neon-green/20 to-neon-green/5 border border-neon-green/50 flex items-center justify-center mb-6 transition-all duration-300",
+        "group-hover:scale-110 group-hover:border-neon-green",
+        isAutoHovered && "scale-110 border-neon-green"
+      )}>
+        <servicio.icon className="w-8 h-8 text-neon-green" />
+      </div>
+
+      {/* Pregunta */}
+      <p className="text-neon-green text-sm font-medium mb-3">
+        {servicio.question}
+      </p>
+
+      {/* Título */}
+      <h3 className="text-white text-xl font-bold mb-4">
+        {servicio.name}
+      </h3>
+
+      {/* Descripción */}
+      <p className="text-gray-400 text-sm mb-6 leading-relaxed">
+        {servicio.description}
+      </p>
+
+      {/* Features con checks */}
+      <ul className="space-y-3 mb-8">
+        {servicio.features.map((feature) => (
+          <li
+            key={feature}
+            className="flex items-center gap-2 text-sm text-gray-300"
+          >
+            <Check className="w-4 h-4 text-neon-green flex-shrink-0" />
+            <span>{feature}</span>
+          </li>
+        ))}
+      </ul>
+
+      {/* CTA */}
+      <Link
+        href="#contacto"
+        className={cn(
+          "mt-auto inline-flex items-center gap-2 text-sm font-semibold text-neon-green transition-colors",
+          "hover:text-white",
+          isAutoHovered && "text-white"
+        )}
+      >
+        Empezar acá
+        <ArrowRight className={cn(
+          "w-4 h-4 transition-transform",
+          isAutoHovered && "translate-x-1"
+        )} />
+      </Link>
+    </motion.div>
+  );
+}
 
 export default function Servicios() {
-  const servicios = [
+  // Auto-focus en mobile cuando la sección es visible
+  const { ref: sectionRef } = useFocusOnScroll({
+    enabled: true,
+    threshold: 0.3,
+    delay: 400,
+    once: true,
+    focusableSelector: 'a[href="#contacto"]', // Primer link "Empezar acá"
+  });
+
+  const servicios: Servicio[] = [
     {
       name: "Validamos tu Idea",
       icon: Lightbulb,
@@ -58,6 +161,7 @@ export default function Servicios() {
   return (
     <section
       id="servicios"
+      ref={sectionRef as React.RefObject<HTMLElement>}
       className="relative overflow-hidden bg-dark-bg py-20 w-full scroll-mt-36"
     >
       <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))]"></div>
@@ -90,54 +194,13 @@ export default function Servicios() {
           viewport={{ once: true }}
           className="grid grid-cols-1 md:grid-cols-3 gap-6"
         >
-          {servicios.map((servicio) => (
-            <motion.div
+          {servicios.map((servicio, index) => (
+            <ServiceCard
               key={servicio.name}
+              servicio={servicio}
+              index={index}
               variants={cardVariants}
-              className="bg-dark-card border border-dark-border rounded-2xl p-8 transition-all duration-300 hover:border-neon-green/50 hover:-translate-y-1 group flex flex-col"
-            >
-              {/* Ícono */}
-              <div className="w-16 h-16 rounded-full bg-gradient-to-br from-neon-green/20 to-neon-green/5 border border-neon-green/50 flex items-center justify-center mb-6 transition-all duration-300 group-hover:scale-110 group-hover:border-neon-green">
-                <servicio.icon className="w-8 h-8 text-neon-green" />
-              </div>
-
-              {/* Pregunta */}
-              <p className="text-neon-green text-sm font-medium mb-3">
-                {servicio.question}
-              </p>
-
-              {/* Título */}
-              <h3 className="text-white text-xl font-bold mb-4">
-                {servicio.name}
-              </h3>
-
-              {/* Descripción */}
-              <p className="text-gray-400 text-sm mb-6 leading-relaxed">
-                {servicio.description}
-              </p>
-
-              {/* Features con checks */}
-              <ul className="space-y-3 mb-8">
-                {servicio.features.map((feature) => (
-                  <li
-                    key={feature}
-                    className="flex items-center gap-2 text-sm text-gray-300"
-                  >
-                    <Check className="w-4 h-4 text-neon-green flex-shrink-0" />
-                    <span>{feature}</span>
-                  </li>
-                ))}
-              </ul>
-
-              {/* CTA */}
-              <Link
-                href="#contacto"
-                className="mt-auto inline-flex items-center gap-2 text-sm font-semibold text-neon-green hover:text-white transition-colors group/cta"
-              >
-                Empezar acá
-                <ArrowRight className="w-4 h-4 transition-transform group-hover/cta:translate-x-1" />
-              </Link>
-            </motion.div>
+            />
           ))}
         </motion.div>
       </div>

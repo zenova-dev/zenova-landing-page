@@ -1,34 +1,51 @@
 "use client";
-import React from "react";
+import React, { useRef, useCallback } from "react";
 import { Search, Palette, Rocket, HeartHandshake, Sparkles, ChevronRight } from "lucide-react";
 import { motion } from "framer-motion";
 import { Button } from "../ui/button";
 import { cn } from "@/lib/utils";
+import { useFocusOnScroll } from "@/hooks/useFocusOnScroll";
+import { useAutoHover } from "@/hooks/useAutoHover";
 
-const stepColorMap: Record<string, { borderColor: string; glowColor: string; bgGradient: string; iconColor: string }> = {
+const stepColorMap: Record<string, {
+  borderColor: string;
+  glowColor: string;
+  bgGradient: string;
+  iconColor: string;
+  activeBorder: string;
+  activeGlow: string;
+}> = {
   'neon-green': {
     borderColor: 'border-neon-green/30 hover:border-neon-green',
     glowColor: 'hover:shadow-lg hover:shadow-neon-green/20',
     bgGradient: 'bg-gradient-to-br from-neon-green/20 to-neon-green/5',
-    iconColor: 'text-neon-green'
+    iconColor: 'text-neon-green',
+    activeBorder: 'border-neon-green',
+    activeGlow: 'shadow-lg shadow-neon-green/20'
   },
   'neon-blue': {
     borderColor: 'border-neon-blue/30 hover:border-neon-blue',
     glowColor: 'hover:shadow-lg hover:shadow-neon-blue/20',
     bgGradient: 'bg-gradient-to-br from-neon-blue/20 to-neon-blue/5',
-    iconColor: 'text-neon-blue'
+    iconColor: 'text-neon-blue',
+    activeBorder: 'border-neon-blue',
+    activeGlow: 'shadow-lg shadow-neon-blue/20'
   },
   'neon-purple': {
     borderColor: 'border-neon-purple/30 hover:border-neon-purple',
     glowColor: 'hover:shadow-lg hover:shadow-neon-purple/20',
     bgGradient: 'bg-gradient-to-br from-neon-purple/20 to-neon-purple/5',
-    iconColor: 'text-neon-purple'
+    iconColor: 'text-neon-purple',
+    activeBorder: 'border-neon-purple',
+    activeGlow: 'shadow-lg shadow-neon-purple/20'
   },
   'pink-500': {
     borderColor: 'border-pink-500/30 hover:border-pink-500',
     glowColor: 'hover:shadow-lg hover:shadow-pink-500/20',
     bgGradient: 'bg-gradient-to-br from-pink-500/20 to-pink-500/5',
-    iconColor: 'text-pink-500'
+    iconColor: 'text-pink-500',
+    activeBorder: 'border-pink-500',
+    activeGlow: 'shadow-lg shadow-pink-500/20'
   }
 };
 
@@ -117,8 +134,17 @@ interface StepCardProps {
 const StepCard = ({ step, index }: StepCardProps) => {
   const details = stepDetails[step.number];
 
+  // Auto-hover cuando la card entra en viewport
+  const { ref, isAutoHovered } = useAutoHover({
+    enabled: true,
+    threshold: 0.6,
+    duration: 1200,
+    delay: 100 + index * 250, // Stagger entre cards
+  });
+
   return (
     <motion.div
+      ref={ref as React.RefObject<HTMLDivElement>}
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
@@ -132,7 +158,10 @@ const StepCard = ({ step, index }: StepCardProps) => {
         "hover:-translate-y-1 transition-all duration-300",
         "flex flex-col h-full",
         stepColorMap[step.color].borderColor,
-        stepColorMap[step.color].glowColor
+        stepColorMap[step.color].glowColor,
+        isAutoHovered && "-translate-y-1",
+        isAutoHovered && stepColorMap[step.color].activeBorder,
+        isAutoHovered && stepColorMap[step.color].activeGlow
       )}
     >
       {/* Header: Badge + Icono */}
@@ -193,8 +222,25 @@ const StepCard = ({ step, index }: StepCardProps) => {
 };
 
 export default function ProcessCta() {
+  const sectionRef = useRef<HTMLElement>(null);
+
+  // Auto-focus en mobile cuando la sección CTA es visible
+  const { ref: focusRef } = useFocusOnScroll({
+    enabled: true,
+    threshold: 0.5,
+    delay: 400,
+    once: true,
+    focusableSelector: '#cta-agendar-button',
+  });
+
+  // Combinar refs
+  const setRefs = useCallback((element: HTMLElement | null) => {
+    sectionRef.current = element;
+    (focusRef as React.MutableRefObject<HTMLElement | null>).current = element;
+  }, [focusRef]);
+
   return (
-    <section id="proceso" className="bg-gradient-to-b from-dark-bg to-black py-20 px-6 scroll-mt-36">
+    <section id="proceso" ref={setRefs} className="overflow-hidden bg-gradient-to-b from-dark-bg to-black py-20 px-4 md:px-6 scroll-mt-36">
       <div className="container mx-auto max-w-7xl">
         {/* Section Title */}
         <motion.div
@@ -269,6 +315,7 @@ export default function ProcessCta() {
                 {/* CTA Button */}
                 <a href="#contacto" className="w-full">
                   <Button
+                    id="cta-agendar-button"
                     size="lg"
                     className="w-full bg-neon-green hover:bg-neon-green/90 text-black font-bold text-lg px-8 py-6 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg shadow-neon-green/30"
                   >

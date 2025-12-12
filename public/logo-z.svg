@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none">
+  <!-- Barra horizontal superior - BLANCA -->
+  <rect x="0" y="0" width="100" height="15" fill="white"/>
+
+  <!-- Barra horizontal inferior - BLANCA -->
+  <rect x="0" y="85" width="100" height="15" fill="white"/>
+
+  <!-- Diagonal dividida en 3 franjas paralelas -->
+  <!-- Franja 1 - Amarillo (izquierda) -->
+  <polygon points="55,15 70,15 20,85 5,85" fill="#E2FF50"/>
+
+  <!-- Franja 2 - Verde lima (centro) -->
+  <polygon points="70,15 85,15 35,85 20,85" fill="#7DD957"/>
+
+  <!-- Franja 3 - Verde teal (derecha) -->
+  <polygon points="85,15 100,15 100,25 50,85 35,85" fill="#2EB88A"/>
+</svg>

@@ -2,10 +2,27 @@
 import { ChevronRight } from "lucide-react";
 import { RippleButton } from "../ui/ripple-button";
 import { motion } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
+import { useFocusOnScroll } from "@/hooks/useFocusOnScroll";
 
 export default function Hero() {
   const [scrollY, setScrollY] = useState(0);
+  const sectionRef = useRef<HTMLElement>(null);
+
+  // Auto-focus en mobile cuando el usuario vuelve al hero
+  const { ref: focusRef } = useFocusOnScroll({
+    enabled: true,
+    threshold: 0.7,
+    delay: 300,
+    once: false, // Permitir re-focus si vuelve al hero
+    focusableSelector: '#hero-cta-button',
+  });
+
+  // Combinar refs
+  const setRefs = useCallback((element: HTMLElement | null) => {
+    sectionRef.current = element;
+    (focusRef as React.MutableRefObject<HTMLElement | null>).current = element;
+  }, [focusRef]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -16,7 +33,7 @@ export default function Hero() {
   }, []);
 
   return (
-    <section className="relative overflow-hidden bg-dark-bg w-full min-h-screen flex items-center scroll-mt-20">
+    <section ref={setRefs} className="relative overflow-hidden bg-dark-bg w-full min-h-screen flex items-center scroll-mt-20">
       {/* Parallax background */}
       <div
         className="absolute inset-0 bg-[url('/grid.svg')] bg-center opacity-10"
@@ -37,7 +54,7 @@ export default function Hero() {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.8 }}
-        className="relative mx-auto px-8 sm:px-12 lg:px-24 xl:px-32 py-12 sm:py-16 lg:py-20 max-w-7xl container"
+        className="relative mx-auto px-4 sm:px-8 md:px-12 lg:px-24 xl:px-32 py-12 sm:py-16 lg:py-20 max-w-7xl container"
       >
         <div className="flex flex-col items-center space-y-8 text-center">
           <div className="space-y-6">
@@ -68,6 +85,7 @@ export default function Hero() {
           >
             <a href="#servicios">
               <RippleButton
+                id="hero-cta-button"
                 size="lg"
                 className="bg-neon-green hover:bg-neon-green/90 text-black text-lg px-8 py-3 rounded-full transition-all duration-300 transform hover:scale-105 font-bold"
               >

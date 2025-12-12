@@ -88,7 +88,7 @@ export function NavBar() {
           href="#home"
           aria-label="Zenova - Volver al inicio"
         >
-          <span className="font-bold text-2xl text-white">Zenova</span>
+          <span className="font-bold italic text-2xl text-white">Zenova</span>
         </a>
         <nav
           className="hidden md:flex items-center space-x-8 font-medium text-lg"

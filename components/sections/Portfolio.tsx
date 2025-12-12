@@ -6,6 +6,8 @@ import Link from "next/link";
 import { ExternalLink } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useBreakpoint } from "@/hooks/useBreakpoint";
+import { useFocusOnScroll } from "@/hooks/useFocusOnScroll";
+import { useAutoHover } from "@/hooks/useAutoHover";
 import { projects as allProjects } from "@/data/projects";
 import type { Project } from "@/types/project";
 
@@ -19,8 +21,17 @@ function ProjectRow({ project, index, isReversed }: ProjectRowProps) {
   const breakpoint = useBreakpoint();
   const isMobile = breakpoint === "mobile";
 
+  // Auto-hover para el proyecto cuando entra en viewport
+  const { ref: projectRef, isAutoHovered } = useAutoHover({
+    enabled: true,
+    threshold: 0.5,
+    duration: 1500,
+    delay: 200,
+  });
+
   return (
     <motion.div
+      ref={projectRef as React.RefObject<HTMLDivElement>}
       initial={{ opacity: 0, y: 50 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-100px" }}
@@ -33,15 +44,25 @@ function ProjectRow({ project, index, isReversed }: ProjectRowProps) {
       {/* Placeholder Visual */}
       <div
         className={cn(
-          "relative h-[250px] md:h-[300px] lg:h-[350px] rounded-2xl overflow-hidden",
+          "relative h-[250px] md:h-[300px] lg:h-[350px] rounded-2xl overflow-hidden transition-all duration-300",
           isMobile && "order-1",
-          !isMobile && isReversed && "order-2"
+          !isMobile && isReversed && "order-2",
+          isAutoHovered && "scale-[1.02] shadow-lg shadow-neon-green/20"
         )}
       >
-        <div className="absolute inset-0 bg-gradient-to-br from-neon-green/20 via-neon-blue/10 to-neon-purple/20 rounded-2xl" />
-        <div className="absolute inset-0 bg-dark-card/50 backdrop-blur-sm rounded-2xl border border-dark-border" />
+        <div className={cn(
+          "absolute inset-0 bg-gradient-to-br from-neon-green/20 via-neon-blue/10 to-neon-purple/20 rounded-2xl transition-all duration-300",
+          isAutoHovered && "from-neon-green/30 via-neon-blue/20 to-neon-purple/30"
+        )} />
+        <div className={cn(
+          "absolute inset-0 bg-dark-card/50 backdrop-blur-sm rounded-2xl border border-dark-border transition-all duration-300",
+          isAutoHovered && "border-neon-green/50"
+        )} />
         <div className="absolute inset-0 flex items-center justify-center">
-          <span className="text-6xl md:text-8xl font-bold text-white/10">
+          <span className={cn(
+            "text-6xl md:text-8xl font-bold text-white/10 transition-all duration-300",
+            isAutoHovered && "text-white/20 scale-110"
+          )}>
             {project.title.charAt(0)}
           </span>
         </div>
@@ -113,11 +134,17 @@ function ProjectRow({ project, index, isReversed }: ProjectRowProps) {
         >
           <Link
             href={`/proyectos/${project.slug}`}
-            className="inline-flex items-center gap-2 text-neon-green font-medium hover:text-white transition-colors group"
+            className={cn(
+              "inline-flex items-center gap-2 text-neon-green font-medium hover:text-white transition-colors group",
+              isAutoHovered && "text-white"
+            )}
           >
             Ver caso completo
             <svg
-              className="w-5 h-5 transform group-hover:translate-x-1 transition-transform"
+              className={cn(
+                "w-5 h-5 transform group-hover:translate-x-1 transition-transform",
+                isAutoHovered && "translate-x-1"
+              )}
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -151,6 +178,15 @@ function ProjectRow({ project, index, isReversed }: ProjectRowProps) {
 export default function Portfolio() {
   const [activeFilter, setActiveFilter] = useState("Todos");
 
+  // Auto-focus en mobile cuando la sección es visible
+  const { ref: sectionRef } = useFocusOnScroll({
+    enabled: true,
+    threshold: 0.3,
+    delay: 400,
+    once: true,
+    focusableSelector: 'button[aria-pressed="true"]', // Botón de filtro activo
+  });
+
   // Extract all unique tags from projects
   const allTags = Array.from(new Set(allProjects.flatMap((p) => p.tags)));
   const filterOptions = ["Todos", ...allTags];
@@ -162,7 +198,7 @@ export default function Portfolio() {
       : allProjects.filter((p) => p.tags.includes(activeFilter));
 
   return (
-    <section id="portfolio" className="scroll-mt-36 py-20 md:py-32 px-6 bg-[#0a0a0a]">
+    <section id="portfolio" ref={sectionRef as React.RefObject<HTMLElement>} className="overflow-hidden scroll-mt-36 py-20 md:py-32 px-4 md:px-6 bg-[#0a0a0a]">
       <div className="max-w-7xl mx-auto">
         {/* Title */}
         <motion.div
